@@ -3,6 +3,9 @@ local M = {}
 M.modules = { "editor", "syntax", "treesitter", "lsp", "plugins" }
 
 function M.load()
+  -- Neovim re-runs the active scheme when 'background' changes; forcing dark from
+  -- inside that reload would undo it, so only force dark when switching in.
+  local switching_in = vim.g.colors_name ~= "deepwick"
   if vim.g.colors_name then
     vim.cmd("highlight clear")
   end
@@ -10,7 +13,9 @@ function M.load()
     vim.cmd("syntax reset")
   end
   vim.o.termguicolors = true
-  vim.o.background = "dark"
+  if switching_in then
+    vim.o.background = "dark"
+  end
   vim.g.colors_name = "deepwick"
 
   local palette = require("deepwick.palette")

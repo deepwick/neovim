@@ -1,4 +1,6 @@
 import json
+import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -85,3 +87,15 @@ def test_airline_theme_guard():
 
 def test_port_conventions():
     assert check_port(REPO, PALETTE.allowed_hex()) == []
+
+
+@pytest.mark.skipif(shutil.which("vim") is None, reason="requires vim")
+def test_airline_guard_message_survives_airlines_try(tmp_path):
+    out = tmp_path / "messages.txt"
+    subprocess.run(
+        ["vim", "-es", "-N", "-u", "NONE", "-i", "NONE", "--cmd", f"set rtp^={REPO}",
+         "-c", "try | runtime autoload/airline/themes/deepwick.vim | catch | endtry",
+         "-c", f"redir! > {out} | silent messages | redir END", "-c", "qa!"],
+        capture_output=True, text=True, timeout=30,
+    )
+    assert "Deepwick airline theme needs Neovim" in out.read_text()

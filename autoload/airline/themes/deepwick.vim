@@ -1,6 +1,6 @@
 " Deepwick theme for vim-airline. Neovim only: colors come from the Lua palette.
 if !has('nvim') || empty(nvim_get_runtime_file('lua/deepwick/palette.lua', v:false))
-  echoerr "Deepwick airline theme needs Neovim with the deepwick port on 'runtimepath'"
+  echohl WarningMsg | echomsg "Deepwick airline theme needs Neovim with the deepwick port on 'runtimepath'" | echohl None
   finish
 endif
 

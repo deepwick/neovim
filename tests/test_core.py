@@ -193,3 +193,10 @@ def test_python_builtin_types_are_types():
     groups = nvim_dump(["@type.builtin", "@type.builtin.python"])["groups"]
     assert groups["@type.builtin"]["fg"] == hexof("blue")
     assert groups["@type.builtin.python"]["fg"] == hexof("teal")
+
+
+def test_setting_light_background_keeps_deepwick():
+    out = nvim_dump(["Normal", "Comment"], before=["colorscheme deepwick", "set background=light"], apply=False)
+    assert out["colors_name"] == "deepwick"
+    check(out["groups"]["Normal"], "foreground", "background", set(), "Normal")
+    check(out["groups"]["Comment"], "comment", None, {"italic"}, "Comment")

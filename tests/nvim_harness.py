@@ -57,14 +57,16 @@ def run_nvim(args: list[str], env_extra: dict | None = None) -> subprocess.Compl
         )
 
 
-def nvim_dump(groups, before=()) -> dict:
+def nvim_dump(groups, before=(), apply=True) -> dict:
     with tempfile.TemporaryDirectory() as tmp:
         script = Path(tmp) / "dump.lua"
         script.write_text(DUMP_LUA, encoding="utf-8")
         args = []
         for command in before:
             args += ["-c", command]
-        args += ["-c", "colorscheme deepwick", "-c", f"luafile {script}", "-c", "qa!"]
+        if apply:
+            args += ["-c", "colorscheme deepwick"]
+        args += ["-c", f"luafile {script}", "-c", "qa!"]
         result = run_nvim(args, {"DEEPWICK_GROUPS": json.dumps(list(groups))})
     assert result.returncode == 0, result.stderr
     assert result.stderr == "", result.stderr
