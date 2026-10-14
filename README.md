@@ -59,6 +59,10 @@ let g:airline_theme = 'deepwick'
 
 - `#include` and other C/C++ preprocessor keywords are Foreground, matching
   Visual Studio; imports in other languages are Magenta.
+- Python builtin types (`str`, `int`) are Teal like other classes; C/C++
+  builtin types (`int`, `char`) are Blue keywords.
+- Python's `and`, `or`, `not`, and `is` are Foreground (operators), while
+  `typeof`, `instanceof`, and `new` in other languages are Magenta.
 - Tree-sitter `@punctuation.special` (for example `${` in template strings)
   is Foreground.
 

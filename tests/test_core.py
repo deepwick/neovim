@@ -181,3 +181,15 @@ def test_switching_schemes_leaves_no_leftover_groups():
     before, after = json.loads(fresh.stdout), json.loads(switched.stdout)
     leaked = sorted(name for name in before if after.get(name) != before[name])
     assert leaked == []
+
+
+def test_python_logical_keywords_are_operators():
+    groups = nvim_dump(["@keyword.operator", "@keyword.operator.python"])["groups"]
+    assert groups["@keyword.operator"]["fg"] == hexof("magenta")
+    assert groups["@keyword.operator.python"]["fg"] == hexof("foreground")
+
+
+def test_python_builtin_types_are_types():
+    groups = nvim_dump(["@type.builtin", "@type.builtin.python"])["groups"]
+    assert groups["@type.builtin"]["fg"] == hexof("blue")
+    assert groups["@type.builtin.python"]["fg"] == hexof("teal")
