@@ -1,6 +1,6 @@
 local M = {}
 
-M.modules = { "editor", "syntax", "treesitter", "lsp" }
+M.modules = { "editor", "syntax", "treesitter", "lsp", "plugins" }
 
 function M.load()
   if vim.g.colors_name then
