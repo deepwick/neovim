@@ -57,6 +57,12 @@ let g:airline_theme = 'deepwick'
 
 ## Notes
 
+- `@keyword.directive` is bold Foreground. Many Tree-sitter grammars use it
+  beyond preprocessors, for shebang lines among others, so those are bold too.
+- Mint (interfaces, enums, structs, type parameters) needs LSP semantic tokens.
+  With Tree-sitter alone they are Teal like other types.
+- The `queries/python/highlights.scm` extension stays loaded while the plugin
+  is installed, even under another colorscheme.
 - With Tree-sitter, `#include` and other C/C++ preprocessor keywords are bold
   Foreground and macro names are Magenta, matching Visual Studio; imports in
   other languages are Magenta. Neovim's legacy (non-Tree-sitter) C syntax
