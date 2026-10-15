@@ -71,3 +71,41 @@ def nvim_dump(groups, before=(), apply=True) -> dict:
     assert result.returncode == 0, result.stderr
     assert result.stderr == "", result.stderr
     return json.loads(result.stdout)
+
+
+TS_SITE = Path(os.environ.get("DEEPWICK_TS_SITE", Path.home() / ".local/share/nvim/site"))
+NVIM_TREESITTER = TS_SITE / "pack/core/opt/nvim-treesitter/runtime"
+requires_python_parser = pytest.mark.skipif(
+    not ((TS_SITE / "parser/python.so").is_file() and (NVIM_TREESITTER / "queries/python/highlights.scm").is_file()),
+    reason="requires the Tree-sitter python parser and nvim-treesitter queries",
+)
+
+CAPTURE_LUA = r"""
+local probe = vim.json.decode(vim.env.DEEPWICK_PROBE)
+vim.cmd.edit(probe.file)
+vim.treesitter.start(0, probe.lang)
+vim.treesitter.get_parser(0):parse(true)
+local out = {}
+for _, pos in ipairs(probe.positions) do
+  local caps = vim.inspect_pos(0, pos[1], pos[2], { syntax = false, extmarks = false, semantic_tokens = false }).treesitter
+  local top = caps[#caps]
+  local hl = vim.api.nvim_get_hl(0, { name = top.hl_group, link = false })
+  out[#out + 1] = { capture = top.capture, fg = hl.fg and string.format("#%06x", hl.fg) or vim.NIL, bold = hl.bold or false }
+end
+io.stdout:write(vim.json.encode(out))
+"""
+
+
+def nvim_captures(path, lang, positions) -> list[dict]:
+    """Top Tree-sitter capture and its resolved style at each 0-based (row, col)."""
+    with tempfile.TemporaryDirectory() as tmp:
+        script = Path(tmp) / "captures.lua"
+        script.write_text(CAPTURE_LUA, encoding="utf-8")
+        probe = {"file": str(path), "lang": lang, "positions": positions}
+        result = run_nvim(
+            ["--cmd", f"set rtp^={TS_SITE}", "--cmd", f"set rtp^={NVIM_TREESITTER}",
+             "-c", "colorscheme deepwick", "-c", f"luafile {script}", "-c", "qa!"],
+            {"DEEPWICK_PROBE": json.dumps(probe)},
+        )
+    assert result.returncode == 0, result.stderr
+    return json.loads(result.stdout)

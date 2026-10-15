@@ -14,7 +14,7 @@ A deep navy colorscheme with Visual Studio 2022's syntax colors, for Neovim
 With `vim.pack` (Neovim 0.12):
 
 ```lua
-vim.pack.add({ "https://github.com/deepwick/neovim" })
+vim.pack.add({ { src = "https://github.com/deepwick/neovim", name = "deepwick" } })
 vim.cmd.colorscheme("deepwick")
 ```
 
@@ -57,12 +57,18 @@ let g:airline_theme = 'deepwick'
 
 ## Notes
 
-- `#include` and other C/C++ preprocessor keywords are Foreground, matching
-  Visual Studio; imports in other languages are Magenta.
+- With Tree-sitter, `#include` and other C/C++ preprocessor keywords are bold
+  Foreground and macro names are Magenta, matching Visual Studio; imports in
+  other languages are Magenta. Neovim's legacy (non-Tree-sitter) C syntax
+  colors `#include` and whole `#define` lines as Include/Macro (Magenta).
 - Python builtin types (`str`, `int`) are Teal like other classes; C/C++
   builtin types (`int`, `char`) are Blue keywords.
 - Python's `and`, `or`, `not`, and `is` are Foreground (operators), while
   `typeof`, `instanceof`, and `new` in other languages are Magenta.
+- A Python `for` loop's `in` is Magenta, like the other control-flow keywords;
+  membership `in` (`x in y`) is Foreground. The colorscheme ships a small
+  `queries/python/highlights.scm` extension for this; it only moves the
+  for-loop `in` to the standard `@keyword.repeat` capture.
 - Tree-sitter `@punctuation.special` (for example `${` in template strings)
   is Foreground.
 

@@ -159,7 +159,7 @@ def test_undercurl_groups():
 def test_c_include_is_preprocessor_keyword():
     groups = nvim_dump(["@keyword.import", "@keyword.import.c", "@keyword.import.python"])["groups"]
     assert groups["@keyword.import"]["fg"] == hexof("magenta")
-    assert groups["@keyword.import.python"]["fg"] in (hexof("magenta"), None)
+    assert groups["@keyword.import.python"]["fg"] == hexof("magenta")
     assert groups["@keyword.import.c"]["fg"] == hexof("foreground")
 
 
@@ -200,3 +200,10 @@ def test_setting_light_background_keeps_deepwick():
     assert out["colors_name"] == "deepwick"
     check(out["groups"]["Normal"], "foreground", "background", set(), "Normal")
     check(out["groups"]["Comment"], "comment", None, {"italic"}, "Comment")
+
+
+def test_preprocessor_keywords_are_bold_foreground():
+    names = ["@keyword.directive", "@keyword.directive.define", "@keyword.import.c", "@keyword.import.cpp"]
+    groups = nvim_dump(names)["groups"]
+    for name in names:
+        check(groups[name], "foreground", None, {"bold"}, name)

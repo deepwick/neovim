@@ -22,7 +22,7 @@ return function(c)
     Delimiter = { fg = c.foreground },
     PreProc = { fg = c.muted, bold = true },
     PreCondit = { fg = c.muted, bold = true },
-    Define = { fg = c.foreground },
+    Define = { fg = c.foreground, bold = true },
     Macro = { fg = c.magenta },
     Type = { fg = c.teal },
     Typedef = { fg = c.teal },
